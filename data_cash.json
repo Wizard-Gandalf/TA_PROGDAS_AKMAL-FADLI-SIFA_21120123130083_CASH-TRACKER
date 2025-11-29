@@ -1,0 +1,278 @@
+{
+    "transaksi": [
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 25000,
+            "kategori": "Makan",
+            "keterangan": "Sarapan",
+            "waktu": "08:11:32",
+            "timestamp": 1738362692
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 15000,
+            "kategori": "Jajan",
+            "keterangan": "Cemilan",
+            "waktu": "15:32:10",
+            "timestamp": 1738391530
+        },
+        {
+            "tipe": "pemasukan",
+            "jumlah": 50000.0,
+            "kategori": "Lainnya",
+            "keterangan": " teman bayar utang",
+            "waktu": "12:48:52",
+            "timestamp": 1738379332
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 12000,
+            "kategori": "Transport",
+            "keterangan": "Ojek",
+            "waktu": "09:05:12",
+            "timestamp": 1738442712
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 30000,
+            "kategori": "Makan",
+            "keterangan": "Makan siang",
+            "waktu": "13:20:45",
+            "timestamp": 1738456845
+        },
+        {
+            "tipe": "pemasukan",
+            "jumlah": 300000,
+            "kategori": "Gaji",
+            "keterangan": "Part-time",
+            "waktu": "20:11:03",
+            "timestamp": 1738482663
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 18000,
+            "kategori": "Minum",
+            "keterangan": "Es kopi",
+            "waktu": "10:31:55",
+            "timestamp": 1738524715
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 9000,
+            "kategori": "Jajan",
+            "keterangan": "Gorengan",
+            "waktu": "16:44:39",
+            "timestamp": 1738547079
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 32000,
+            "kategori": "Makan",
+            "keterangan": "Kuliner",
+            "waktu": "12:15:55",
+            "timestamp": 1738610155
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 15000,
+            "kategori": "Transport",
+            "keterangan": "Bus",
+            "waktu": "07:42:22",
+            "timestamp": 1738587742
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 25000,
+            "kategori": "Makan",
+            "keterangan": "Sarapan",
+            "waktu": "08:19:51",
+            "timestamp": 1738702791
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 50000,
+            "kategori": "Belanja",
+            "keterangan": "Sabun",
+            "waktu": "18:11:37",
+            "timestamp": 1738741897
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 18000,
+            "kategori": "Jajan",
+            "keterangan": "Cimol",
+            "waktu": "14:25:14",
+            "timestamp": 1738790714
+        },
+        {
+            "tipe": "pemasukan",
+            "jumlah": 100000,
+            "kategori": "Nabung",
+            "keterangan": "Tabungan",
+            "waktu": "19:02:55",
+            "timestamp": 1738809775
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 15000,
+            "kategori": "Transport",
+            "keterangan": "Ojek",
+            "waktu": "08:44:28",
+            "timestamp": 1738883068
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 26000,
+            "kategori": "Makan",
+            "keterangan": "Makan siang",
+            "waktu": "13:15:37",
+            "timestamp": 1738898137
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 9000,
+            "kategori": "Minum",
+            "keterangan": "Teh",
+            "waktu": "10:32:33",
+            "timestamp": 1738960353
+        },
+        {
+            "tipe": "pemasukan",
+            "jumlah": 80000,
+            "kategori": "Lainnya",
+            "keterangan": "Hadiah kecil",
+            "waktu": "19:19:01",
+            "timestamp": 1739043541
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 17000,
+            "kategori": "Jajan",
+            "keterangan": "Roti",
+            "waktu": "11:11:32",
+            "timestamp": 1739013092
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 32000,
+            "kategori": "Belanja",
+            "keterangan": "Tisu",
+            "waktu": "17:14:50",
+            "timestamp": 1739110490
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 25000,
+            "kategori": "Makan",
+            "keterangan": "Nasi goreng",
+            "waktu": "20:21:13",
+            "timestamp": 1739120473
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 10000,
+            "kategori": "Minum",
+            "keterangan": "Air mineral",
+            "waktu": "14:11:09",
+            "timestamp": 1739223069
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 15000,
+            "kategori": "Transport",
+            "keterangan": "Bus",
+            "waktu": "07:55:20",
+            "timestamp": 1739199320
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 28000,
+            "kategori": "Makan",
+            "keterangan": "Soto",
+            "waktu": "12:22:11",
+            "timestamp": 1739302931
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 9000,
+            "kategori": "Jajan",
+            "keterangan": "Snack",
+            "waktu": "15:40:57",
+            "timestamp": 1739313657
+        },
+        {
+            "tipe": "pemasukan",
+            "jumlah": 200000,
+            "kategori": "Gaji",
+            "keterangan": "Project kecil",
+            "waktu": "19:51:14",
+            "timestamp": 1739399474
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 11000,
+            "kategori": "Minum",
+            "keterangan": "Teh manis",
+            "waktu": "09:24:22",
+            "timestamp": 1739361862
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 50000,
+            "kategori": "Belanja",
+            "keterangan": "Shampoo",
+            "waktu": "18:02:48",
+            "timestamp": 1739486568
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 25000,
+            "kategori": "Makan",
+            "keterangan": "Ayam geprek",
+            "waktu": "13:14:30",
+            "timestamp": 1739462070
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 10000,
+            "kategori": "Transport",
+            "keterangan": "Ojek",
+            "waktu": "07:40:20",
+            "timestamp": 1739528420
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 15000,
+            "kategori": "Jajan",
+            "keterangan": "Keripik",
+            "waktu": "17:30:55",
+            "timestamp": 1739569855
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 23000,
+            "kategori": "Makan",
+            "keterangan": "Bakso",
+            "waktu": "12:34:22",
+            "timestamp": 1739649262
+        },
+        {
+            "tipe": "pemasukan",
+            "jumlah": 120000,
+            "kategori": "Nabung",
+            "keterangan": "Tabungan mingguan",
+            "waktu": "20:15:33",
+            "timestamp": 1739679333
+        }
+    ],
+    "kategori": [
+        "Makan",
+        "Jajan",
+        "Transport",
+        "Belanja",
+        "Minum",
+        "Gaji",
+        "Nabung",
+        "Lainnya"
+    ]
+}
