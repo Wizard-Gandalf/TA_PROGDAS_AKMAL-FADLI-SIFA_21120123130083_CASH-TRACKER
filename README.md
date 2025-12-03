@@ -37,6 +37,8 @@ Aplikasi **Cash Tracker** adalah program desktop sederhana berbasis Python dan T
 ├─ data_store.py   # manajemen file JSON (init, load, save, lock)
 ├─ data_cash.json  # file data transaksi (otomatis dibuat saat pertama jalan)
 
+```
+
 ## 🔧 Prasyarat
 
 Python 3.8 atau lebih baru
@@ -48,6 +50,9 @@ tkinter (biasanya sudah include di instalasi Python)
 matplotlib
 
 watchdog
+
+```
+```
 
 Jika ingin menggunakan virtual environment, disarankan membuat venv terlebih dahulu.
 
@@ -63,10 +68,12 @@ Jika kamu membuat requirements.txt, isinya bisa seperti:
 matplotlib
 watchdog
 
-
 Lalu jalankan:
 
 pip install -r requirements.txt
+
+```
+```
 
 ▶️ Cara Menjalankan Program
 
@@ -115,6 +122,9 @@ Riwayat transaksi akan muncul pada tabel di bawah, dan ringkasan + grafik akan t
 Gunakan combobox Tanggal di atas tabel untuk memfilter transaksi per hari tertentu.
 
 Gunakan tombol Edit untuk memperbarui data transaksi dan Hapus untuk menghapus.
+
+```
+```
 
 ⚠️ Catatan
 
