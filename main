@@ -1,0 +1,665 @@
+# main.py
+import tkinter as tk
+from tkinter import ttk, messagebox
+import threading
+import time
+from datetime import datetime
+
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+
+import data_store
+from charts import update_charts
+
+
+# -------------------------------------------------------------
+#   PALET WARNA & STYLE
+# -------------------------------------------------------------
+WINDOW_BG = "#f5f5f5"
+CONTENT_BG = "#f5f5f5"
+CARD_BG = "#ffffff"
+FORM_BG = "#e8f5e9"
+PRIMARY = "#2E7D32"
+PRIMARY_LIGHT = "#A5D6A7"
+PRIMARY_SOFT = "#C8E6C9"
+ACCENT = "#66BB6A"
+DANGER = "#E57373"
+TEXT_MAIN = "#333333"
+TEXT_SUB = "#555555"
+
+
+def setup_styles():
+    style = ttk.Style()
+    # pakai tema yang bisa di-custom
+    try:
+        style.theme_use("clam")
+    except tk.TclError:
+        pass
+
+    # Tombol utama (Tambah)
+    style.configure(
+        "Accent.TButton",
+        font=("Segoe UI", 10, "bold"),
+        foreground="white",
+        background=ACCENT,
+        padding=(10, 5),
+        borderwidth=0,
+    )
+    style.map(
+        "Accent.TButton",
+        background=[("active", "#4CAF50")],
+    )
+
+    # Tombol sekunder (Batal)
+    style.configure(
+        "Secondary.TButton",
+        font=("Segoe UI", 10),
+        foreground=TEXT_MAIN,
+        background="#ffffff",
+        padding=(10, 5),
+        borderwidth=1,
+        relief="solid",
+    )
+    style.map(
+        "Secondary.TButton",
+        background=[("active", "#eeeeee")],
+    )
+
+    # Tombol danger (Hapus)
+    style.configure(
+        "Danger.TButton",
+        font=("Segoe UI", 10, "bold"),
+        foreground="white",
+        background=DANGER,
+        padding=(10, 5),
+        borderwidth=0,
+    )
+    style.map(
+        "Danger.TButton",
+        background=[("active", "#D32F2F")],
+    )
+
+    # Treeview (tabel)
+    style.configure(
+        "Treeview",
+        background="white",
+        foreground=TEXT_MAIN,
+        fieldbackground="white",
+        rowheight=22,
+        font=("Segoe UI", 10),
+    )
+    style.configure(
+        "Treeview.Heading",
+        font=("Segoe UI", 10, "bold"),
+        background="#eeeeee",
+        foreground=TEXT_MAIN,
+    )
+    style.map(
+        "Treeview",
+        background=[("selected", "#C5E1A5")],
+    )
+
+
+# -------------------------------------------------------------
+#   HELPER TANGGAL (BERDASAR COMBOBOX)
+# -------------------------------------------------------------
+def get_selected_date():
+    selected = cmb_filter_tanggal.get()
+    if selected == "Semua":
+        return datetime.now()
+    try:
+        return datetime.strptime(selected, "%Y-%m-%d")
+    except:
+        return datetime.now()
+
+
+# -------------------------------------------------------------
+#   GUI UPDATE FUNCTIONS
+# -------------------------------------------------------------
+def refresh_all():
+    data = data_store.load_json()
+
+    update_filter_options(data)
+    refresh_table(data)
+    refresh_summary(data)
+    refresh_category_list(data)
+
+    selected_date = get_selected_date()
+    mode = view_mode.get()
+    update_charts(
+        data,
+        selected_date,
+        mode,
+        figure_weekly,
+        canvas_weekly,
+        lbl_bulan,
+        figure_pie,
+        canvas_pie,
+    )
+
+
+def refresh_table(data):
+    tabel.delete(*tabel.get_children())
+    tanggal_filter = cmb_filter_tanggal.get()
+
+    transaksi = data["transaksi"]
+    if tanggal_filter != "Semua":
+        transaksi = [
+            t
+            for t in transaksi
+            if datetime.fromtimestamp(t["timestamp"]).strftime("%Y-%m-%d")
+            == tanggal_filter
+        ]
+
+    for i, t in enumerate(transaksi, start=1):
+        waktu = datetime.fromtimestamp(t["timestamp"]).strftime("%H:%M:%S")
+        tag = "odd" if i % 2 else "even"  # zebra row
+        tabel.insert(
+            "",
+            "end",
+            values=(
+                i,
+                t["tipe"],
+                t["jumlah"],
+                t["kategori"],
+                t["keterangan"],
+                waktu,
+                t["timestamp"],  # kolom TS tersembunyi
+            ),
+            tags=(tag,),
+        )
+
+
+def refresh_summary(data):
+    pemasukan = sum(
+        t["jumlah"] for t in data["transaksi"] if t["tipe"] == "pemasukan"
+    )
+    pengeluaran = sum(
+        t["jumlah"] for t in data["transaksi"] if t["tipe"] == "pengeluaran"
+    )
+
+    lbl_saldo.config(text=f"Saldo : Rp {pemasukan - pengeluaran:,.0f}")
+
+    now = datetime.now()
+    this_month = [
+        t
+        for t in data["transaksi"]
+        if datetime.fromtimestamp(t["timestamp"]).strftime("%Y-%m")
+        == now.strftime("%Y-%m")
+    ]
+
+    pengeluaran_bulan = sum(
+        t["jumlah"] for t in this_month if t["tipe"] == "pengeluaran"
+    )
+    lbl_pengeluaran_bulan.config(
+        text=f"Pengeluaran bulan ini : Rp {pengeluaran_bulan:,.0f}"
+    )
+
+    today = datetime.now().strftime("%Y-%m-%d")
+    today_data = [
+        t
+        for t in data["transaksi"]
+        if datetime.fromtimestamp(t["timestamp"]).strftime("%Y-%m-%d")
+        == today
+        and t["tipe"] == "pengeluaran"
+    ]
+
+    total_today = sum(t["jumlah"] for t in today_data)
+    lbl_pengeluaran_hari.config(
+        text=f"Pengeluaran hari ini : Rp {total_today:,.0f}"
+    )
+
+
+def refresh_category_list(data):
+    kategori = list({t["kategori"] for t in data["transaksi"]})
+    kategori.sort()
+    cmb_kategori["values"] = kategori
+
+
+def update_filter_options(data=None):
+    if data is None:
+        data = data_store.load_json()
+
+    dates = sorted(
+        list(
+            {
+                datetime.fromtimestamp(t["timestamp"]).strftime("%Y-%m-%d")
+                for t in data["transaksi"]
+            }
+        )
+    )
+    cmb_filter_tanggal["values"] = ["Semua"] + dates
+
+
+# -------------------------------------------------------------
+#   ADD / EDIT / DELETE
+# -------------------------------------------------------------
+def tambah_data():
+    data = data_store.load_json()
+
+    tipe = cmb_tipe.get()
+    jumlah = entry_jumlah.get()
+    kategori = cmb_kategori.get()
+    ket = entry_keterangan.get()
+
+    if tipe not in ["pemasukan", "pengeluaran"]:
+        messagebox.showwarning("Error", "Pilih tipe yang benar")
+        return
+
+    try:
+        jumlah = float(jumlah)
+    except:
+        messagebox.showwarning("Error", "Jumlah harus angka")
+        return
+
+    ts = time.time()
+
+    new_trans = {
+        "tipe": tipe,
+        "jumlah": jumlah,
+        "kategori": kategori,
+        "keterangan": ket,
+        "waktu": datetime.fromtimestamp(ts).strftime("%H:%M:%S"),
+        "timestamp": ts,
+    }
+
+    data["transaksi"].append(new_trans)
+
+    if kategori and kategori not in data["kategori"]:
+        data["kategori"].append(kategori)
+
+    data_store.save_json(data)
+    refresh_all()
+
+    entry_jumlah.delete(0, tk.END)
+    entry_keterangan.delete(0, tk.END)
+
+
+def edit_data():
+    selected = tabel.selection()
+    if not selected:
+        messagebox.showwarning("Error", "Pilih data")
+        return
+
+    values = tabel.item(selected[0], "values")
+    ts_selected = float(values[6])
+
+    data = data_store.load_json()
+
+    idx = next(
+        (i for i, t in enumerate(data["transaksi"])
+         if t["timestamp"] == ts_selected),
+        None,
+    )
+
+    if idx is None:
+        messagebox.showerror("Error", "Data tidak ditemukan")
+        return
+
+    win = tk.Toplevel(root)
+    win.title("Edit Data")
+    win.geometry("320x260")
+    win.configure(bg=CARD_BG)
+
+    pad = {"padx": 10, "pady": 5}
+
+    tk.Label(win, text="Tipe", bg=CARD_BG, fg=TEXT_MAIN).pack(
+        anchor="w", **pad
+    )
+    tipe_e = ttk.Combobox(win, values=["pemasukan", "pengeluaran"])
+    tipe_e.pack(fill="x", padx=10)
+
+    tk.Label(win, text="Jumlah", bg=CARD_BG, fg=TEXT_MAIN).pack(
+        anchor="w", **pad
+    )
+    jumlah_e = tk.Entry(win)
+    jumlah_e.pack(fill="x", padx=10)
+
+    tk.Label(win, text="Kategori", bg=CARD_BG, fg=TEXT_MAIN).pack(
+        anchor="w", **pad
+    )
+    kategori_e = tk.Entry(win)
+    kategori_e.pack(fill="x", padx=10)
+
+    tk.Label(win, text="Keterangan", bg=CARD_BG, fg=TEXT_MAIN).pack(
+        anchor="w", **pad
+    )
+    ket_e = tk.Entry(win)
+    ket_e.pack(fill="x", padx=10)
+
+    old = data["transaksi"][idx]
+
+    tipe_e.set(old["tipe"])
+    jumlah_e.insert(0, old["jumlah"])
+    kategori_e.insert(0, old["kategori"])
+    ket_e.insert(0, old["keterangan"])
+
+    def save_edit():
+        try:
+            jumlah_val = float(jumlah_e.get())
+        except:
+            messagebox.showerror("Error", "Jumlah harus angka")
+            return
+
+        data["transaksi"][idx]["tipe"] = tipe_e.get()
+        data["transaksi"][idx]["jumlah"] = jumlah_val
+        data["transaksi"][idx]["kategori"] = kategori_e.get()
+        data["transaksi"][idx]["keterangan"] = ket_e.get()
+
+        data_store.save_json(data)
+        refresh_all()
+        win.destroy()
+
+    ttk.Button(win, text="Simpan", style="Accent.TButton",
+               command=save_edit).pack(pady=10)
+
+
+def hapus_data():
+    selected = tabel.selection()
+    if not selected:
+        messagebox.showwarning("Error", "Pilih data")
+        return
+
+    values = tabel.item(selected[0], "values")
+    ts_selected = float(values[6])
+
+    data = data_store.load_json()
+
+    idx = next(
+        (i for i, t in enumerate(data["transaksi"])
+         if t["timestamp"] == ts_selected),
+        None,
+    )
+
+    if idx is None:
+        messagebox.showerror("Error", "Data tidak ditemukan")
+        return
+
+    del data["transaksi"][idx]
+
+    data_store.save_json(data)
+    refresh_all()
+
+
+# -------------------------------------------------------------
+#   WATCHDOG (REALTIME JSON)
+# -------------------------------------------------------------
+class JSONEventHandler(FileSystemEventHandler):
+    def on_modified(self, event):
+        if data_store.refresh_lock:
+            return
+        if data_store.FILE_JSON in event.src_path:
+            refresh_all()
+
+
+def start_watchdog():
+    handler = JSONEventHandler()
+    observer = Observer()
+    observer.schedule(handler, ".", recursive=False)
+    observer.start()
+
+
+# -------------------------------------------------------------
+#   GUI TKINTER
+# -------------------------------------------------------------
+root = tk.Tk()
+root.title("Cash Tracker")
+root.geometry("1300x900")
+root.configure(bg=WINDOW_BG)
+
+setup_styles()
+
+# container utama
+main_container = tk.Frame(root, bg=WINDOW_BG)
+main_container.pack(fill="both", expand=True, padx=10, pady=10)
+
+# LEFT & RIGHT
+left = tk.Frame(main_container, bg=CONTENT_BG)
+left.pack(side="left", fill="both", expand=True, padx=(0, 8))
+
+right = tk.Frame(main_container, bg="#fafafa", bd=1, relief="solid")
+right.pack(side="right", fill="both", padx=(8, 0))
+
+# -------------------------------------------------------------
+#   HEADER KIRI
+# -------------------------------------------------------------
+header = tk.Frame(left, bg=CONTENT_BG)
+header.pack(fill="x", pady=(0, 10))
+
+title = tk.Label(
+    header,
+    text="Cash Tracker",
+    font=("Segoe UI", 22, "bold"),
+    bg=CONTENT_BG,
+    fg=PRIMARY,
+)
+title.pack(anchor="w")
+
+subtitle = tk.Label(
+    header,
+    text="Sistem Manajemen Keuangan",
+    font=("Segoe UI", 11),
+    bg=CONTENT_BG,
+    fg=TEXT_SUB,
+)
+subtitle.pack(anchor="w")
+
+# -------------------------------------------------------------
+#   SUMMARY BOXES
+# -------------------------------------------------------------
+summary_frame = tk.Frame(left, bg=CONTENT_BG)
+summary_frame.pack(pady=10, anchor="w", fill="x")
+
+lbl_saldo = tk.Label(
+    summary_frame,
+    text="Saldo : Rp 0",
+    font=("Segoe UI", 13, "bold"),
+    bg=PRIMARY_LIGHT,
+    fg=PRIMARY,
+    width=30,
+    pady=10,
+)
+lbl_saldo.grid(row=0, column=0, padx=(0, 8), sticky="w")
+
+lbl_pengeluaran_bulan = tk.Label(
+    summary_frame,
+    text="Pengeluaran bulan ini : Rp 0",
+    font=("Segoe UI", 13, "bold"),
+    bg=PRIMARY_SOFT,
+    fg=PRIMARY,
+    width=30,
+    pady=10,
+)
+lbl_pengeluaran_bulan.grid(row=0, column=1, padx=(8, 0), sticky="w")
+
+# -------------------------------------------------------------
+#   DAILY SPEND
+# -------------------------------------------------------------
+daily_header = tk.Label(
+    left,
+    text="Daily Spend",
+    font=("Segoe UI", 14, "bold"),
+    bg=CONTENT_BG,
+    fg=PRIMARY,
+)
+daily_header.pack(anchor="w", pady=(20, 0))
+
+today_str = datetime.now().strftime("%A, %d %B %Y")
+lbl_tanggal_hari_ini = tk.Label(
+    left,
+    text=today_str,
+    font=("Segoe UI", 11),
+    bg=CONTENT_BG,
+    fg=TEXT_SUB,
+)
+lbl_tanggal_hari_ini.pack(anchor="w")
+
+lbl_pengeluaran_hari = tk.Label(
+    left,
+    text="Pengeluaran hari ini : Rp 0",
+    font=("Segoe UI", 12),
+    bg=CONTENT_BG,
+    fg=TEXT_MAIN,
+)
+lbl_pengeluaran_hari.pack(anchor="w")
+
+# -------------------------------------------------------------
+#   FORM INPUT
+# -------------------------------------------------------------
+form = tk.Frame(left, bg=FORM_BG, padx=12, pady=12, bd=1, relief="solid")
+form.pack(pady=12, fill="x")
+
+def _label_form(text):
+    return tk.Label(form, text=text, bg=FORM_BG, fg=TEXT_MAIN,
+                    font=("Segoe UI", 10))
+
+_label_form("Tipe").pack(anchor="w")
+cmb_tipe = ttk.Combobox(form, values=["pemasukan", "pengeluaran"], state="readonly")
+cmb_tipe.pack(fill="x", pady=(0, 5))
+
+_label_form("Jumlah").pack(anchor="w")
+entry_jumlah = tk.Entry(form)
+entry_jumlah.pack(fill="x", pady=(0, 5))
+
+_label_form("Kategori").pack(anchor="w")
+cmb_kategori = ttk.Combobox(form)
+cmb_kategori.pack(fill="x", pady=(0, 5))
+
+_label_form("Keterangan").pack(anchor="w")
+entry_keterangan = tk.Entry(form)
+entry_keterangan.pack(fill="x", pady=(0, 5))
+
+btn_row = tk.Frame(form, bg=FORM_BG)
+btn_row.pack(fill="x", pady=(8, 0))
+
+ttk.Button(
+    btn_row, text="Tambah", style="Accent.TButton", command=tambah_data
+).pack(side="left", padx=(0, 5))
+
+ttk.Button(
+    btn_row,
+    text="Batal",
+    style="Secondary.TButton",
+    command=lambda: (
+        entry_jumlah.delete(0, tk.END),
+        entry_keterangan.delete(0, tk.END),
+    ),
+).pack(side="right", padx=(5, 0))
+
+# -------------------------------------------------------------
+#   TABEL RIWAYAT
+# -------------------------------------------------------------
+history_card = tk.Frame(left, bg=CARD_BG, bd=1, relief="solid")
+history_card.pack(fill="both", expand=True, pady=(10, 0))
+
+tk.Label(
+    history_card,
+    text="Riwayat Transaksi",
+    bg=CARD_BG,
+    fg=TEXT_MAIN,
+    font=("Segoe UI", 14, "bold"),
+).pack(anchor="w", padx=10, pady=(8, 4))
+
+filter_frame = tk.Frame(history_card, bg=CARD_BG)
+filter_frame.pack(anchor="w", padx=10, pady=(0, 4))
+
+tk.Label(filter_frame, text="Tanggal:", bg=CARD_BG, fg=TEXT_MAIN).pack(
+    side="left", padx=(0, 5)
+)
+
+cmb_filter_tanggal = ttk.Combobox(filter_frame, values=["Semua"], width=18)
+cmb_filter_tanggal.set("Semua")
+cmb_filter_tanggal.pack(side="left")
+cmb_filter_tanggal.bind("<<ComboboxSelected>>", lambda e: refresh_all())
+
+columns = ("No", "Tipe", "Jumlah", "Kategori", "Keterangan", "Waktu", "TS")
+tabel = ttk.Treeview(history_card, columns=columns, show="headings", height=10)
+
+for col in columns:
+    tabel.heading(col, text=col)
+    if col == "TS":
+        tabel.column(col, width=0, stretch=False)
+    else:
+        tabel.column(col, width=120, anchor="w")
+
+# zebra row
+tabel.tag_configure("odd", background="#fafafa")
+tabel.tag_configure("even", background="#ffffff")
+
+tabel.pack(fill="both", expand=True, padx=10, pady=(0, 5))
+
+btn_bar = tk.Frame(history_card, bg=CARD_BG)
+btn_bar.pack(fill="x", padx=10, pady=(0, 8))
+
+ttk.Button(
+    btn_bar, text="Edit", style="Secondary.TButton", command=edit_data
+).pack(side="left")
+
+ttk.Button(
+    btn_bar, text="Hapus", style="Danger.TButton", command=hapus_data
+).pack(side="left", padx=(8, 0))
+
+# -------------------------------------------------------------
+#   RIGHT PANEL (GRAFIK)
+# -------------------------------------------------------------
+right_header = tk.Frame(right, bg="#fafafa")
+right_header.pack(fill="x", pady=(10, 0))
+
+lbl_bulan = tk.Label(
+    right_header,
+    text="",
+    font=("Segoe UI", 16, "bold"),
+    bg="#fafafa",
+    fg=TEXT_MAIN,
+)
+lbl_bulan.pack(anchor="n")
+
+mode_frame = tk.Frame(right, bg="#fafafa")
+mode_frame.pack(anchor="n", pady=5)
+
+view_mode = tk.StringVar(value="mingguan")
+
+btn_week = tk.Radiobutton(
+    mode_frame,
+    text="Mingguan",
+    variable=view_mode,
+    value="mingguan",
+    bg="#fafafa",
+    fg=TEXT_MAIN,
+    command=refresh_all,
+)
+btn_week.pack(side="left", padx=10)
+
+btn_month = tk.Radiobutton(
+    mode_frame,
+    text="Bulanan",
+    variable=view_mode,
+    value="bulanan",
+    bg="#fafafa",
+    fg=TEXT_MAIN,
+    command=refresh_all,
+)
+btn_month.pack(side="left", padx=10)
+
+figure_weekly = Figure(figsize=(4, 3), dpi=100)
+canvas_weekly = FigureCanvasTkAgg(figure_weekly, right)
+canvas_weekly.get_tk_widget().pack(fill="both", expand=True, padx=10, pady=(0, 10))
+
+figure_pie = Figure(figsize=(4, 3), dpi=100)
+canvas_pie = FigureCanvasTkAgg(figure_pie, right)
+canvas_pie.get_tk_widget().pack(fill="both", expand=True, padx=10, pady=(0, 10))
+
+# -------------------------------------------------------------
+#   START
+# -------------------------------------------------------------
+data_store.init_json()
+refresh_all()
+
+threading.Thread(target=start_watchdog, daemon=True).start()
+
+root.mainloop()
