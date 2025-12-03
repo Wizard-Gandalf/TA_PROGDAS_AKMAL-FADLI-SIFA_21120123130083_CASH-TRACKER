@@ -37,7 +37,7 @@ Aplikasi **Cash Tracker** adalah program desktop sederhana berbasis Python dan T
 ├─ data_store.py   # manajemen file JSON (init, load, save, lock)
 ├─ data_cash.json  # file data transaksi (otomatis dibuat saat pertama jalan)
 
-🔧 Prasyarat
+## 🔧 Prasyarat
 
 Python 3.8 atau lebih baru
 
