@@ -247,6 +247,56 @@ def tambah_data():
     kategori = cmb_kategori.get()
     ket = entry_keterangan.get()
 
+    # validasi tipe
+    if tipe not in ["pemasukan", "pengeluaran"]:
+        messagebox.showwarning("Error", "Pilih tipe yang benar")
+        return
+
+    # validasi jumlah
+    try:
+        jumlah = float(jumlah)
+    except:
+        messagebox.showwarning("Error", "Jumlah harus angka")
+        return
+
+    # validasi kategori wajib
+    if not kategori.strip():
+        messagebox.showwarning("Error", "Kategori tidak boleh kosong")
+        return
+
+    # validasi keterangan wajib
+    if not ket.strip():
+        messagebox.showwarning("Error", "Keterangan tidak boleh kosong")
+        return
+
+    ts = time.time()
+
+    new_trans = {
+        "tipe": tipe,
+        "jumlah": jumlah,
+        "kategori": kategori,
+        "keterangan": ket,
+        "waktu": datetime.fromtimestamp(ts).strftime("%H:%M:%S"),
+        "timestamp": ts,
+    }
+
+    data["transaksi"].append(new_trans)
+
+    if kategori and kategori not in data["kategori"]:
+        data["kategori"].append(kategori)
+
+    data_store.save_json(data)
+    refresh_all()
+
+    
+
+    data = data_store.load_json()
+
+    tipe = cmb_tipe.get()
+    jumlah = entry_jumlah.get()
+    kategori = cmb_kategori.get()
+    ket = entry_keterangan.get()
+
     if tipe not in ["pemasukan", "pengeluaran"]:
         messagebox.showwarning("Error", "Pilih tipe yang benar")
         return
@@ -346,14 +396,26 @@ def edit_data():
             messagebox.showerror("Error", "Jumlah harus angka")
             return
 
+        kategori_baru = kategori_e.get()
+        ket_baru = ket_e.get()
+
+        if not kategori_baru.strip():
+            messagebox.showwarning("Error", "Kategori tidak boleh kosong")
+            return
+
+        if not ket_baru.strip():
+            messagebox.showwarning("Error", "Keterangan tidak boleh kosong")
+            return
+
         data["transaksi"][idx]["tipe"] = tipe_e.get()
         data["transaksi"][idx]["jumlah"] = jumlah_val
-        data["transaksi"][idx]["kategori"] = kategori_e.get()
-        data["transaksi"][idx]["keterangan"] = ket_e.get()
+        data["transaksi"][idx]["kategori"] = kategori_baru
+        data["transaksi"][idx]["keterangan"] = ket_baru
 
         data_store.save_json(data)
         refresh_all()
         win.destroy()
+
 
     ttk.Button(win, text="Simpan", style="Accent.TButton",
                command=save_edit).pack(pady=10)
@@ -409,8 +471,23 @@ def start_watchdog():
 # -------------------------------------------------------------
 root = tk.Tk()
 root.title("Cash Tracker")
+
+# ukuran awal
 root.geometry("1300x900")
+
+# batasi ukuran minimum supaya tombol tidak ketutupan
+root.minsize(1100, 650)
+
+# khusus Windows: buka langsung dalam keadaan maksimal (fullscreen window)
+try:
+    root.state("zoomed")
+except Exception:
+    # kalau di OS lain (mis. Linux) state("zoomed") mungkin tidak ada,
+    # jadi kita diamkan saja
+    pass
+
 root.configure(bg=WINDOW_BG)
+
 
 setup_styles()
 

@@ -1,42 +1,205 @@
 {
     "transaksi": [
         {
+            "tipe": "pemasukan",
+            "jumlah": 1500000.0,
+            "kategori": "Gaji part-time",
+            "keterangan": "transfer orang tua",
+            "waktu": "10:43:19",
+            "timestamp": 1763955799.0
+        },
+        {
             "tipe": "pengeluaran",
-            "jumlah": 450000.0,
-            "kategori": "Hiburan",
-            "keterangan": "beli game",
-            "waktu": "21:44:57",
-            "timestamp": 1764686697.8966923
+            "jumlah": 350000.0,
+            "kategori": "transportasi",
+            "keterangan": "naik bus ke luar kota",
+            "waktu": "15:39:24",
+            "timestamp": 1763973564.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 30000.0,
+            "kategori": "transportasi",
+            "keterangan": "naik bus",
+            "waktu": "12:34:23",
+            "timestamp": 1764048863.0
         },
         {
             "tipe": "pemasukan",
-            "jumlah": 1000000.0,
+            "jumlah": 2000000.0,
+            "kategori": "Gaji part-time",
+            "keterangan": "transfer orang tua",
+            "waktu": "09:41:37",
+            "timestamp": 1764124897.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 50000.0,
+            "kategori": "Hiburan",
+            "keterangan": "beli game",
+            "waktu": "11:02:02",
+            "timestamp": 1764216122.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 20000.0,
+            "kategori": "Tagihan",
+            "keterangan": "bayar listrik",
+            "waktu": "21:05:09",
+            "timestamp": 1764252309.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 30000.0,
+            "kategori": "Hiburan",
+            "keterangan": "nongkrong",
+            "waktu": "20:49:06",
+            "timestamp": 1764337746.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 100000.0,
+            "kategori": "Hiburan",
+            "keterangan": "beli game",
+            "waktu": "14:28:15",
+            "timestamp": 1764314895.0
+        },
+        {
+            "tipe": "pemasukan",
+            "jumlah": 500000.0,
             "kategori": "Uang jajan",
-            "keterangan": "bulanan",
-            "waktu": "21:45:50",
-            "timestamp": 1764686750.1959863
+            "keterangan": "transfer orang tua",
+            "waktu": "15:19:10",
+            "timestamp": 1764404350.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 30000.0,
+            "kategori": "isi bensin",
+            "keterangan": "isi bensin motor",
+            "waktu": "20:22:20",
+            "timestamp": 1764422540.0
         },
         {
             "tipe": "pengeluaran",
             "jumlah": 15000.0,
             "kategori": "Makan",
-            "keterangan": "makan malam",
-            "waktu": "22:01:58",
-            "timestamp": 1764687718.6791825
+            "keterangan": "nongkrong",
+            "waktu": "13:15:05",
+            "timestamp": 1764396905.0
         },
         {
             "tipe": "pengeluaran",
-            "jumlah": 250000.0,
+            "jumlah": 30000.0,
+            "kategori": "Hiburan",
+            "keterangan": "beli game",
+            "waktu": "21:31:43",
+            "timestamp": 1764513103.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 75000.0,
+            "kategori": "Tagihan",
+            "keterangan": "bayar listrik",
+            "waktu": "15:38:31",
+            "timestamp": 1764491911.0
+        },
+        {
+            "tipe": "pemasukan",
+            "jumlah": 2000000.0,
+            "kategori": "Gaji part-time",
+            "keterangan": "gaji bulanan",
+            "waktu": "14:34:37",
+            "timestamp": 1764574477.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 30000.0,
+            "kategori": "isi bensin",
+            "keterangan": "isi bensin motor",
+            "waktu": "15:06:26",
+            "timestamp": 1764662786.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 350000.0,
+            "kategori": "Makan",
+            "keterangan": "makan di restoran",
+            "waktu": "09:03:22",
+            "timestamp": 1764641002.0
+        },
+        {
+            "tipe": "pemasukan",
+            "jumlah": 2000000.0,
+            "kategori": "Gaji part-time",
+            "keterangan": "gaji bulanan",
+            "waktu": "15:55:27",
+            "timestamp": 1764752127.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 75000.0,
+            "kategori": "Hiburan",
+            "keterangan": "nongkrong",
+            "waktu": "14:21:41",
+            "timestamp": 1764832901.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 30000.0,
+            "kategori": "Tagihan",
+            "keterangan": "bayar internet",
+            "waktu": "13:39:02",
+            "timestamp": 1764830342.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 350000.0,
+            "kategori": "Tagihan",
+            "keterangan": "bayar kos",
+            "waktu": "20:07:18",
+            "timestamp": 1764853638.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 75000.0,
             "kategori": "transportasi",
-            "keterangan": "Naik kereta ke Jogja",
-            "waktu": "22:38:22",
-            "timestamp": 1764689902.821134
+            "keterangan": "naik ojek online",
+            "waktu": "08:38:58",
+            "timestamp": 1764898738.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 75000.0,
+            "kategori": "Makan",
+            "keterangan": "makan malam",
+            "waktu": "18:30:09",
+            "timestamp": 1764934209.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 10000.0,
+            "kategori": "Makan",
+            "keterangan": "makan malam",
+            "waktu": "09:37:12",
+            "timestamp": 1764988632.0
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 75000.0,
+            "kategori": "isi bensin",
+            "keterangan": "isi bensin",
+            "waktu": "21:47:48",
+            "timestamp": 1765032468.0
         }
     ],
     "kategori": [
+        "Gaji part-time",
         "Hiburan",
-        "Uang jajan",
         "Makan",
+        "Tagihan",
+        "Uang jajan",
+        "isi bensin",
         "transportasi"
     ]
 }
