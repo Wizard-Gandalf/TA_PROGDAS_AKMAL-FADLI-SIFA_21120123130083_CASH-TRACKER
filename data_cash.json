@@ -178,19 +178,51 @@
         },
         {
             "tipe": "pengeluaran",
-            "jumlah": 10000.0,
-            "kategori": "Makan",
-            "keterangan": "makan malam",
-            "waktu": "09:37:12",
-            "timestamp": 1764988632.0
-        },
-        {
-            "tipe": "pengeluaran",
             "jumlah": 75000.0,
             "kategori": "isi bensin",
             "keterangan": "isi bensin",
             "waktu": "21:47:48",
             "timestamp": 1765032468.0
+        },
+        {
+            "tipe": "pemasukan",
+            "jumlah": 1000000.0,
+            "kategori": "Uang jajan",
+            "keterangan": "dikasih orang",
+            "waktu": "12:19:54",
+            "timestamp": 1764998394.1016371
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 100000.0,
+            "kategori": "Makan",
+            "keterangan": "makan siang",
+            "waktu": "12:45:03",
+            "timestamp": 1764999903.7721395
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 100000,
+            "kategori": "Hiburan",
+            "keterangan": "bioskop",
+            "waktu": "12:49:13",
+            "timestamp": 1765000153.9096138
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 10000,
+            "kategori": "Makan",
+            "keterangan": "makan ayam geprek",
+            "waktu": "13:00:59",
+            "timestamp": 1765000859.8146172
+        },
+        {
+            "tipe": "pengeluaran",
+            "jumlah": 12000,
+            "kategori": "Jajan",
+            "keterangan": "Jajan cilok",
+            "waktu": "13:02:57",
+            "timestamp": 1765000977.2860038
         }
     ],
     "kategori": [
@@ -200,6 +232,7 @@
         "Tagihan",
         "Uang jajan",
         "isi bensin",
-        "transportasi"
+        "transportasi",
+        "Jajan"
     ]
 }

@@ -35,13 +35,11 @@ TEXT_SUB = "#555555"
 
 def setup_styles():
     style = ttk.Style()
-    # pakai tema yang bisa di-custom
     try:
         style.theme_use("clam")
     except tk.TclError:
         pass
 
-    # Tombol utama (Tambah)
     style.configure(
         "Accent.TButton",
         font=("Segoe UI", 10, "bold"),
@@ -50,12 +48,8 @@ def setup_styles():
         padding=(10, 5),
         borderwidth=0,
     )
-    style.map(
-        "Accent.TButton",
-        background=[("active", "#4CAF50")],
-    )
+    style.map("Accent.TButton", background=[("active", "#4CAF50")])
 
-    # Tombol sekunder (Batal)
     style.configure(
         "Secondary.TButton",
         font=("Segoe UI", 10),
@@ -65,12 +59,8 @@ def setup_styles():
         borderwidth=1,
         relief="solid",
     )
-    style.map(
-        "Secondary.TButton",
-        background=[("active", "#eeeeee")],
-    )
+    style.map("Secondary.TButton", background=[("active", "#eeeeee")])
 
-    # Tombol danger (Hapus)
     style.configure(
         "Danger.TButton",
         font=("Segoe UI", 10, "bold"),
@@ -79,12 +69,8 @@ def setup_styles():
         padding=(10, 5),
         borderwidth=0,
     )
-    style.map(
-        "Danger.TButton",
-        background=[("active", "#D32F2F")],
-    )
+    style.map("Danger.TButton", background=[("active", "#D32F2F")])
 
-    # Treeview (tabel)
     style.configure(
         "Treeview",
         background="white",
@@ -99,10 +85,7 @@ def setup_styles():
         background="#eeeeee",
         foreground=TEXT_MAIN,
     )
-    style.map(
-        "Treeview",
-        background=[("selected", "#C5E1A5")],
-    )
+    style.map("Treeview", background=[("selected", "#C5E1A5")])
 
 
 # -------------------------------------------------------------
@@ -114,7 +97,7 @@ def get_selected_date():
         return datetime.now()
     try:
         return datetime.strptime(selected, "%Y-%m-%d")
-    except:
+    except Exception:
         return datetime.now()
 
 
@@ -158,7 +141,7 @@ def refresh_table(data):
 
     for i, t in enumerate(transaksi, start=1):
         waktu = datetime.fromtimestamp(t["timestamp"]).strftime("%H:%M:%S")
-        tag = "odd" if i % 2 else "even"  # zebra row
+        tag = "odd" if i % 2 else "even"
         tabel.insert(
             "",
             "end",
@@ -226,14 +209,12 @@ def update_filter_options(data=None):
         data = data_store.load_json()
 
     dates = sorted(
-        list(
-            {
-                datetime.fromtimestamp(t["timestamp"]).strftime("%Y-%m-%d")
-                for t in data["transaksi"]
-            }
-        )
+        {
+            datetime.fromtimestamp(t["timestamp"]).strftime("%Y-%m-%d")
+            for t in data["transaksi"]
+        }
     )
-    cmb_filter_tanggal["values"] = ["Semua"] + dates
+    cmb_filter_tanggal["values"] = ["Semua"] + list(dates)
 
 
 # -------------------------------------------------------------
@@ -243,68 +224,26 @@ def tambah_data():
     data = data_store.load_json()
 
     tipe = cmb_tipe.get()
-    jumlah = entry_jumlah.get()
+    jumlah_str = entry_jumlah.get()
     kategori = cmb_kategori.get()
     ket = entry_keterangan.get()
 
-    # validasi tipe
     if tipe not in ["pemasukan", "pengeluaran"]:
         messagebox.showwarning("Error", "Pilih tipe yang benar")
         return
 
-    # validasi jumlah
     try:
-        jumlah = float(jumlah)
-    except:
+        jumlah = int(jumlah_str)
+    except Exception:
         messagebox.showwarning("Error", "Jumlah harus angka")
         return
 
-    # validasi kategori wajib
     if not kategori.strip():
         messagebox.showwarning("Error", "Kategori tidak boleh kosong")
         return
 
-    # validasi keterangan wajib
     if not ket.strip():
         messagebox.showwarning("Error", "Keterangan tidak boleh kosong")
-        return
-
-    ts = time.time()
-
-    new_trans = {
-        "tipe": tipe,
-        "jumlah": jumlah,
-        "kategori": kategori,
-        "keterangan": ket,
-        "waktu": datetime.fromtimestamp(ts).strftime("%H:%M:%S"),
-        "timestamp": ts,
-    }
-
-    data["transaksi"].append(new_trans)
-
-    if kategori and kategori not in data["kategori"]:
-        data["kategori"].append(kategori)
-
-    data_store.save_json(data)
-    refresh_all()
-
-    
-
-    data = data_store.load_json()
-
-    tipe = cmb_tipe.get()
-    jumlah = entry_jumlah.get()
-    kategori = cmb_kategori.get()
-    ket = entry_keterangan.get()
-
-    if tipe not in ["pemasukan", "pengeluaran"]:
-        messagebox.showwarning("Error", "Pilih tipe yang benar")
-        return
-
-    try:
-        jumlah = float(jumlah)
-    except:
-        messagebox.showwarning("Error", "Jumlah harus angka")
         return
 
     ts = time.time()
@@ -391,8 +330,8 @@ def edit_data():
 
     def save_edit():
         try:
-            jumlah_val = float(jumlah_e.get())
-        except:
+            jumlah_val = int(jumlah_e.get())
+        except Exception:
             messagebox.showerror("Error", "Jumlah harus angka")
             return
 
@@ -416,9 +355,9 @@ def edit_data():
         refresh_all()
         win.destroy()
 
-
-    ttk.Button(win, text="Simpan", style="Accent.TButton",
-               command=save_edit).pack(pady=10)
+    ttk.Button(
+        win, text="Simpan", style="Accent.TButton", command=save_edit
+    ).pack(pady=10)
 
 
 def hapus_data():
@@ -472,39 +411,27 @@ def start_watchdog():
 root = tk.Tk()
 root.title("Cash Tracker")
 
-# ukuran awal
-root.geometry("1300x900")
-
-# batasi ukuran minimum supaya tombol tidak ketutupan
-root.minsize(1100, 650)
-
-# khusus Windows: buka langsung dalam keadaan maksimal (fullscreen window)
 try:
     root.state("zoomed")
 except Exception:
-    # kalau di OS lain (mis. Linux) state("zoomed") mungkin tidak ada,
-    # jadi kita diamkan saja
     pass
 
+root.geometry("1300x900")
+root.minsize(1100, 650)
 root.configure(bg=WINDOW_BG)
-
 
 setup_styles()
 
-# container utama
 main_container = tk.Frame(root, bg=WINDOW_BG)
 main_container.pack(fill="both", expand=True, padx=10, pady=10)
 
-# LEFT & RIGHT
 left = tk.Frame(main_container, bg=CONTENT_BG)
 left.pack(side="left", fill="both", expand=True, padx=(0, 8))
 
 right = tk.Frame(main_container, bg="#fafafa", bd=1, relief="solid")
 right.pack(side="right", fill="both", padx=(8, 0))
 
-# -------------------------------------------------------------
-#   HEADER KIRI
-# -------------------------------------------------------------
+# HEADER KIRI
 header = tk.Frame(left, bg=CONTENT_BG)
 header.pack(fill="x", pady=(0, 10))
 
@@ -526,9 +453,7 @@ subtitle = tk.Label(
 )
 subtitle.pack(anchor="w")
 
-# -------------------------------------------------------------
-#   SUMMARY BOXES
-# -------------------------------------------------------------
+# SUMMARY
 summary_frame = tk.Frame(left, bg=CONTENT_BG)
 summary_frame.pack(pady=10, anchor="w", fill="x")
 
@@ -554,9 +479,7 @@ lbl_pengeluaran_bulan = tk.Label(
 )
 lbl_pengeluaran_bulan.grid(row=0, column=1, padx=(8, 0), sticky="w")
 
-# -------------------------------------------------------------
-#   DAILY SPEND
-# -------------------------------------------------------------
+# DAILY SPEND
 daily_header = tk.Label(
     left,
     text="Daily Spend",
@@ -585,18 +508,21 @@ lbl_pengeluaran_hari = tk.Label(
 )
 lbl_pengeluaran_hari.pack(anchor="w")
 
-# -------------------------------------------------------------
-#   FORM INPUT
-# -------------------------------------------------------------
+# FORM INPUT
 form = tk.Frame(left, bg=FORM_BG, padx=12, pady=12, bd=1, relief="solid")
 form.pack(pady=12, fill="x")
 
+
 def _label_form(text):
-    return tk.Label(form, text=text, bg=FORM_BG, fg=TEXT_MAIN,
-                    font=("Segoe UI", 10))
+    return tk.Label(
+        form, text=text, bg=FORM_BG, fg=TEXT_MAIN, font=("Segoe UI", 10)
+    )
+
 
 _label_form("Tipe").pack(anchor="w")
-cmb_tipe = ttk.Combobox(form, values=["pemasukan", "pengeluaran"], state="readonly")
+cmb_tipe = ttk.Combobox(
+    form, values=["pemasukan", "pengeluaran"], state="readonly"
+)
 cmb_tipe.pack(fill="x", pady=(0, 5))
 
 _label_form("Jumlah").pack(anchor="w")
@@ -628,9 +554,7 @@ ttk.Button(
     ),
 ).pack(side="right", padx=(5, 0))
 
-# -------------------------------------------------------------
-#   TABEL RIWAYAT
-# -------------------------------------------------------------
+# TABEL RIWAYAT
 history_card = tk.Frame(left, bg=CARD_BG, bd=1, relief="solid")
 history_card.pack(fill="both", expand=True, pady=(10, 0))
 
@@ -664,7 +588,6 @@ for col in columns:
     else:
         tabel.column(col, width=120, anchor="w")
 
-# zebra row
 tabel.tag_configure("odd", background="#fafafa")
 tabel.tag_configure("even", background="#ffffff")
 
@@ -681,9 +604,7 @@ ttk.Button(
     btn_bar, text="Hapus", style="Danger.TButton", command=hapus_data
 ).pack(side="left", padx=(8, 0))
 
-# -------------------------------------------------------------
-#   RIGHT PANEL (GRAFIK)
-# -------------------------------------------------------------
+# RIGHT PANEL (GRAFIK)
 right_header = tk.Frame(right, bg="#fafafa")
 right_header.pack(fill="x", pady=(10, 0))
 
@@ -725,15 +646,17 @@ btn_month.pack(side="left", padx=10)
 
 figure_weekly = Figure(figsize=(4, 3), dpi=100)
 canvas_weekly = FigureCanvasTkAgg(figure_weekly, right)
-canvas_weekly.get_tk_widget().pack(fill="both", expand=True, padx=10, pady=(0, 10))
+canvas_weekly.get_tk_widget().pack(
+    fill="both", expand=True, padx=10, pady=(0, 10)
+)
 
 figure_pie = Figure(figsize=(4, 3), dpi=100)
 canvas_pie = FigureCanvasTkAgg(figure_pie, right)
-canvas_pie.get_tk_widget().pack(fill="both", expand=True, padx=10, pady=(0, 10))
+canvas_pie.get_tk_widget().pack(
+    fill="both", expand=True, padx=10, pady=(0, 10)
+)
 
-# -------------------------------------------------------------
-#   START
-# -------------------------------------------------------------
+# START
 data_store.init_json()
 refresh_all()
 
